@@ -96,10 +96,8 @@ public class main extends Thread {
                             if (_news.title.toString().length() < 20) {
                                 continue;
                             }
-
                             _str.append(_url+":  "+"<a href=\"" + _news.url.toString() + "\" target=\"_blank\" >" + _news.title.toString() + "</a><br/>");
-
-                        }
+                       }
                     }
                 }
             }
