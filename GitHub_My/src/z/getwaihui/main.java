@@ -52,10 +52,10 @@ public class main extends Thread {
             while (true) {
                 if (fun.isOnline()) {
                     jx_url(_list);
-                    Thread.sleep(1000 * 10);
-                } else {
-                    System.out.println("网络不通 等待60s...");
                     Thread.sleep(1000 * 60);
+                } else {
+                    System.out.println("网络不通 等待15s...");
+                    Thread.sleep(1000 * 15);
                 }
             }
         } catch (Exception e) {
@@ -79,9 +79,13 @@ public class main extends Thread {
 
     private static void jx_url(List _list) {
 
+        java.text.DecimalFormat df = new java.text.DecimalFormat("#0.0000");
+        //java.text.DecimalFormat df2 = new java.text.DecimalFormat("#0.00000");
+        StringBuffer br = new StringBuffer();
+        
         if (_list.size() > 0) {
 
-            String systime = _tools.systime_prase_string("");
+            String systime = _tools.systime_prase_string("时") + ":" + _tools.systime_prase_string("分") + ":" + _tools.systime_prase_string("秒");
             strclass.data _EURUSD = new strclass.data();
             strclass.data _USDJPY = new strclass.data();
             strclass.data _GBPUSD = new strclass.data();
@@ -127,56 +131,65 @@ public class main extends Thread {
                                 _EURUSD.TIME = time;
                                 double sum_l = Double.parseDouble(_EURUSD.VALUE);
                                 sum = sum * Math.pow(sum_l, -0.576);
+                                sum = Double.parseDouble(df.format(sum));
                             } else if (name.equals("USDJPY")) {
                                 _USDJPY.NAME = name;
                                 _USDJPY.VALUE = value;
                                 _USDJPY.TIME = time;
                                 double sum_l = Double.parseDouble(_USDJPY.VALUE);
                                 sum = sum * Math.pow(sum_l, 0.136);
+                                sum = Double.parseDouble(df.format(sum));
                             } else if (name.equals("GBPUSD")) {
                                 _GBPUSD.NAME = name;
                                 _GBPUSD.VALUE = value;
                                 _GBPUSD.TIME = time;
                                 double sum_l = Double.parseDouble(_GBPUSD.VALUE);
                                 sum = sum * Math.pow(sum_l, -0.119);
+                                sum = Double.parseDouble(df.format(sum));
                             } else if (name.equals("USDCAD")) {
                                 _USDCAD.NAME = name;
                                 _USDCAD.VALUE = value;
                                 _USDCAD.TIME = time;
                                 double sum_l = Double.parseDouble(_USDCAD.VALUE);
                                 sum = sum * Math.pow(sum_l, 0.091);
+                                sum = Double.parseDouble(df.format(sum));
                             } else if (name.equals("USDSEK")) {
                                 _USDSEK.NAME = name;
                                 _USDSEK.VALUE = value;
                                 _USDSEK.TIME = time;
                                 double sum_l = Double.parseDouble(_USDSEK.VALUE);
                                 sum = sum * Math.pow(sum_l, 0.042);
+                                sum = Double.parseDouble(df.format(sum));
                             } else if (name.equals("USDCHF")) {
                                 _USDCHF.NAME = name;
                                 _USDCHF.VALUE = value;
                                 _USDCHF.TIME = time;
                                 double sum_l = Double.parseDouble(_USDCHF.VALUE);
                                 sum = sum * Math.pow(sum_l, 0.036);
+                                sum = Double.parseDouble(df.format(sum));
                             }
                         }
-                        java.text.DecimalFormat df = new java.text.DecimalFormat("#0.0000");
-                        java.text.DecimalFormat df2 = new java.text.DecimalFormat("#0.00");
 
                         if (_USDX.VALUE != null && _USDX.VALUE.length() > 0) {
                             _USDX.NAME = "USDX";
                             _USDX.TIME = systime;
-                            _USDX.VALUE = df.format(sum);
 
-                            double sum_updown = (Double.parseDouble(df.format(sum)) - Double.parseDouble(_USDX.VALUE)) / Double.parseDouble(_USDX.VALUE);
+                            double datanew = Double.parseDouble(df.format(sum));
+                            double dataold = Double.parseDouble(df.format(Double.parseDouble(_USDX.VALUE)));
+
+                            double sum_updown = (datanew - dataold);
+
                             BigDecimal pd = new BigDecimal(sum_updown);
                             int r = pd.compareTo(BigDecimal.ZERO); //和0，Zero比较
                             if (r >= 0) {  //0  等于0   1大于0
-                                _USDX.UPDOWN = "+" + df2.format(sum_updown);
+                                _USDX.UPDOWN = "+" + df.format(sum_updown);
                                 sendmail(pd, _USDX.UPDOWN);
                             } else {  //   -1小于0
-                                _USDX.UPDOWN = df2.format(sum_updown);
+                                _USDX.UPDOWN = df.format(sum_updown);
                                 sendmail(pd, _USDX.UPDOWN);
                             }
+
+                            _USDX.VALUE = df.format(sum);
 
                         } else {
                             _USDX.NAME = "USDX";
@@ -184,12 +197,12 @@ public class main extends Thread {
                             _USDX.VALUE = df.format(sum);
                         }
 
-                        StringBuffer br = new StringBuffer();
+                        br = new StringBuffer();
                         br.append(_USDX.TIME);
-                        br.append(" ").append("USDX:").append(_USDX.VALUE);
+                        br.append(" ").append("UX:").append(_USDX.VALUE);
                         br.append(" ").append("").append(_USDX.UPDOWN);
-                        // br.append(" ").append("E/U:").append(_EURUSD.VALUE);
-                        // br.append(" ").append("U/J:").append(_USDJPY.VALUE);
+                        //br.append(" ").append("E/U:").append(_EURUSD.VALUE);
+                        //br.append(" ").append("U/J:").append(_USDJPY.VALUE);
 
                         System.out.println(br.toString());
 
@@ -205,12 +218,11 @@ public class main extends Thread {
 
     private static void sendmail(BigDecimal pd, String UPDOWN) {
         java.text.DecimalFormat df = new java.text.DecimalFormat("#0.0000");
-        java.text.DecimalFormat df2 = new java.text.DecimalFormat("#0.00");
 
         boolean _bs = false;
 
         //------------------判断是否发邮件------------------//
-        double sum_2 = Double.parseDouble("0.01");
+        double sum_2 = Double.parseDouble("0.03");
         BigDecimal pd2 = new BigDecimal(sum_2);
         int r2 = pd.compareTo(pd2);
         if (r2 >= 0) {  // 表示 >=0.01
@@ -219,7 +231,7 @@ public class main extends Thread {
         //------------------判断是否发邮件------------------//
 
         //------------------判断是否发邮件------------------//
-        double sum_3 = Double.parseDouble("-0.01");
+        double sum_3 = Double.parseDouble("-0.03");
         BigDecimal pd3 = new BigDecimal(sum_3);
         int r3 = pd.compareTo(pd3);
         if (r3 < 0) {  // 表示 <-0.01
@@ -235,8 +247,8 @@ public class main extends Thread {
             _mailmessage.from = "11941450@qq.com";
             _mailmessage.to = "18605236780@wo.cn";
             _mailmessage.copyto = "";
-            _mailmessage.subject = "USDX提醒:" + UPDOWN;
-            _mailmessage.content = "USDX提醒:" + UPDOWN;
+            _mailmessage.subject = "UX:" + UPDOWN;
+            _mailmessage.content = "UX:" + UPDOWN;
             _mailmessage.username = "11941450";
             _mailmessage.password = "txyz5011";
             _mailmessage.filename = "";

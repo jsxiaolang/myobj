@@ -16,7 +16,7 @@ public class strclass {
         public String NAME = "";
         public String VALUE = "";
         public String TIME = "";
-        public String UPDOWN = "+0.00";
+        public String UPDOWN = "0.0000";
 
     }
 }

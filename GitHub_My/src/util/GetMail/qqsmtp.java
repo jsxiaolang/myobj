@@ -58,7 +58,7 @@ public class qqsmtp {
      * @param hostName String
      */
     private void setSmtpHost(String hostName) {
-        System.out.println("设置系统属性：mail.smtp.host = " + hostName);
+        //System.out.println("设置系统属性：mail.smtp.host = " + hostName);
         if (props == null) {
             props = System.getProperties(); //获得系统属性对象 	
         }
@@ -72,14 +72,14 @@ public class qqsmtp {
      */
     private boolean createMimeMessage() {
         try {
-            System.out.println("准备获取邮件会话对象！");
+            //System.out.println("准备获取邮件会话对象！");
             session = Session.getDefaultInstance(props, null); //获得邮件会话对象 
         } catch (Exception e) {
             System.err.println("获取邮件会话对象时发生错误！" + e);
             return false;
         }
 
-        System.out.println("准备创建MIME邮件对象！");
+        //System.out.println("准备创建MIME邮件对象！");
         try {
             mimeMsg = new MimeMessage(session); //创建MIME邮件对象 
             mp = new MimeMultipart();
@@ -97,7 +97,7 @@ public class qqsmtp {
      * @param need
      */
     private void setNeedAuth(boolean need) {
-        System.out.println("设置smtp身份认证：mail.smtp.auth = " + need);
+        //System.out.println("设置smtp身份认证：mail.smtp.auth = " + need);
         if (props == null) {
             props = System.getProperties();
         }
@@ -115,7 +115,7 @@ public class qqsmtp {
      * @return
      */
     private boolean setSubject(String mailSubject) {
-        System.out.println("设置邮件主题！");
+       // System.out.println("设置邮件主题！");
         try {
             mimeMsg.setSubject(mailSubject);
             return true;
@@ -150,7 +150,7 @@ public class qqsmtp {
      */
     private boolean addFileAffix(String filename) {
 
-        System.out.println("增加邮件附件：" + filename);
+        //System.out.println("增加邮件附件：" + filename);
         try {
             BodyPart bp = new MimeBodyPart();
             FileDataSource fileds = new FileDataSource(filename);
@@ -172,7 +172,7 @@ public class qqsmtp {
      * @param from String
      */
     private boolean setFrom(String from) {
-        System.out.println("设置发信人！");
+        //System.out.println("设置发信人！");
         try {
             mimeMsg.setFrom(new InternetAddress(from)); //设置发信人 
             return true;
@@ -222,7 +222,7 @@ public class qqsmtp {
         try {
             mimeMsg.setContent(mp);
             mimeMsg.saveChanges();
-            System.out.println("正在发送邮件....");
+            //System.out.println("正在发送邮件....");
 
             Session mailSession = Session.getInstance(props, null);
             Transport transport = mailSession.getTransport("smtp");
