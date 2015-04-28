@@ -176,9 +176,9 @@ public class fun {
         return charSet;
     }
 
-    public static void sendmail(BigDecimal pd, String UPDOWN) {
+    public static boolean sendmail(BigDecimal pd, String UPDOWN) {
         java.text.DecimalFormat df = new java.text.DecimalFormat("#0.0000");
-
+        boolean _issendok = false;
         boolean _bs = false;
 
         //------------------判断是否发邮件------------------//
@@ -215,6 +215,7 @@ public class fun {
 
             try {
                 _qqsmtp.send(_mailmessage);
+                _issendok=true;
             } catch (Exception ex) {
                 //公司邮箱补发
                 try {
@@ -230,11 +231,13 @@ public class fun {
                     _mailmessage2.password = "txyz5011";
                     _mailmessage2.filename = "";
                     _tidesmtp.send(_mailmessage2);
+                    _issendok=true;
                 } catch (Exception ex2) {
                     System.out.println("邮件发送失败：\r\n" + ex.getMessage() + "\r\n" + ex2.getMessage());
                 }
             }
-        }
+        }        
+        return _issendok;
     }
 
     public static void ini(List _list) {

@@ -166,27 +166,24 @@ public class main extends Thread {
                                 }
                             }
 
+                            boolean _issendok = false;
+
                             if (_USDX.VALUE != null && _USDX.VALUE.length() > 0) {
                                 _USDX.NAME = "USDX";
                                 _USDX.TIME = systime;
-
                                 double datanew = Double.parseDouble(df.format(sum));
                                 double dataold = Double.parseDouble(df.format(Double.parseDouble(_USDX.VALUE)));
-
                                 double sum_updown = (datanew - dataold);
-
                                 BigDecimal pd = new BigDecimal(sum_updown);
                                 int r = pd.compareTo(BigDecimal.ZERO); //和0，Zero比较
                                 if (r >= 0) {  //0  等于0   1大于0
                                     _USDX.UPDOWN = "+" + df.format(sum_updown);
-                                    fun.sendmail(pd, _USDX.UPDOWN);
+                                    _issendok = fun.sendmail(pd, _USDX.UPDOWN);
                                 } else {  //   -1小于0
                                     _USDX.UPDOWN = df.format(sum_updown);
-                                    fun.sendmail(pd, _USDX.UPDOWN);
+                                    _issendok = fun.sendmail(pd, _USDX.UPDOWN);
                                 }
-
                                 _USDX.VALUE = df.format(sum);
-
                             } else {
                                 _USDX.NAME = "USDX";
                                 _USDX.TIME = systime;
@@ -199,6 +196,9 @@ public class main extends Thread {
                             br.append(" ").append("").append(_USDX.UPDOWN);
                             //br.append(" ").append("E/U:").append(_EURUSD.VALUE);
                             //br.append(" ").append("U/J:").append(_USDJPY.VALUE);
+                            if (_issendok) {
+                                br.append(" ").append("SendMail");
+                            }
 
                             System.out.println(br.toString());
                         }

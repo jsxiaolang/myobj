@@ -231,8 +231,7 @@ public class tidesmtp {
                 transport.sendMessage(mimeMsg, mimeMsg.getRecipients(Message.RecipientType.CC));
             }
             //transport.send(mimeMsg); 
-
-            System.out.println("发送邮件成功！");
+            //System.out.println("发送邮件成功！");
             transport.close();
             return true;
         } catch (Exception e) {
