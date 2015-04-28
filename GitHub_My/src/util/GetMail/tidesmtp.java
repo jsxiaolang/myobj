@@ -20,11 +20,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-public class qqsmtp {
+public class tidesmtp {
 
      
     public static class mailmessage {
-        public String smtp = "smtp.qq.com";
+        public String smtp = "Smtpcom.263xmail.com";
         public String from = "";
         public String to = "";
         public String copyto = "";
@@ -236,6 +236,7 @@ public class qqsmtp {
             transport.close();
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("邮件发送失败！" + e.getMessage().toString());
             return false;
         }

@@ -10,11 +10,11 @@ package main;
  * @author Administrator
  * 
  */
-public class run_getwaihui {
+public class run_getwh {
 
     public static void main(String[] args) {
         try {
-            z.getwaihui.main _main = new z.getwaihui.main();
+            z.getwh.main _main = new z.getwh.main();
             _main.run();
         } catch (Exception e) {
             e.printStackTrace();
