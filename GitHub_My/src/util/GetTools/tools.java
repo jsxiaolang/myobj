@@ -9,6 +9,8 @@ import util.AbstractClass.*;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.Timestamp;
@@ -70,7 +72,7 @@ public class tools extends datatools {
         String _return_d = "";
         java.util.Date timeDate = null;
         timeDate = new Date();
-       // java.sql.Time dateTime = new java.sql.Time(timeDate.getTime());
+        // java.sql.Time dateTime = new java.sql.Time(timeDate.getTime());
         if (_type == null || _type.toString().length() == 0 || _type.equals("年月日时分秒")) {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             _return_d = df.format(timeDate);
@@ -604,11 +606,35 @@ public class tools extends datatools {
 
     private StringBuffer return_javaclass(Object _DBNAME, String _fileurl) {
         StringBuffer _str = new StringBuffer();
-
         System.out.println();
-        
-
         return _str;
+    }
+
+    public String getnettime(int type) {
+
+        String _time = "";
+        //取得资源对象 
+        try {
+            URL url = new URL("http://www.baidu.com");
+            //生成连接对象 
+            URLConnection uc = url.openConnection();
+            //发出连接 
+            uc.connect();
+            long time = uc.getDate();
+            //System.out.println("long time:" + time);
+            Date date = new Date(time);
+            //System.out.println("date:" + date.toString());
+            if (type == 1) {
+                _time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+            } else {
+                _time = new SimpleDateFormat("HH:mm:ss yyyy-MM-dd ").format(date);
+            }
+            //System.out.println("_time"+_time);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return _time;
     }
 
 }

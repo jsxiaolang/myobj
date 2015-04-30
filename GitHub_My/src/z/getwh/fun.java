@@ -37,6 +37,7 @@ import org.xml.sax.InputSource;
 /**
  *
  * @author Administrator
+ *
  */
 public class fun {
 
@@ -44,15 +45,42 @@ public class fun {
 
     public static boolean isOnline() {
         boolean bs = false;
-        URL url = null;
-        try {
-            url = new URL("http://www.baidu.com/");
-            InputStream in = url.openStream();
-            bs = true;
-            in.close();
-        } catch (Exception e) {
 
+        String strurl = "www.baidu.com";
+        String code = "";
+        // 初始化，此处构造函数就与3.1中不同  
+        String charSet = "";
+
+        //创建HttpClientBuilder  
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        //HttpClient  
+        CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
+
+        HttpGet httpGet = new HttpGet(strurl);
+        try {
+            //执行get请求  
+            HttpResponse httpResponse = closeableHttpClient.execute(httpGet);
+            //获取响应消息实体  
+            HttpEntity entity = httpResponse.getEntity();
+            //响应状态  
+            System.out.println("status:" + httpResponse.getStatusLine());
+            //判断响应实体是否为空  
+            if (entity != null) {
+                //System.out.println("contentEncoding:" + entity.getContentEncoding());
+                //System.out.println("response content:" + EntityUtils.toString(entity));
+                byte[] bytes = EntityUtils.toByteArray(entity);
+                charSet = new String(bytes, code);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                closeableHttpClient.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
         return bs;
     }
 
@@ -133,7 +161,7 @@ public class fun {
             try {
                 java.awt.Desktop.getDesktop().open(new File(file_path));
             } catch (Exception ex) {
-                System.out.println("调用默认程序打开程序失败:" + ex.getMessage());
+                System.out.println("run error:" + ex.getMessage());
             }
         }
 
@@ -176,25 +204,25 @@ public class fun {
         return charSet;
     }
 
-    public static boolean sendmail(BigDecimal pd, String UPDOWN) {
+    public static boolean sendmail(BigDecimal pd, String UPDOWN, util.GetFile.xmlconf _xmlconf) {
         java.text.DecimalFormat df = new java.text.DecimalFormat("#0.0000");
         boolean _issendok = false;
         boolean _bs = false;
 
         //------------------判断是否发邮件------------------//
-        double sum_2 = Double.parseDouble("0.03");
-        BigDecimal pd2 = new BigDecimal(sum_2);
+        //double sum_2 = Double.parseDouble("0.03");
+        BigDecimal pd2 = new BigDecimal(Double.parseDouble(_xmlconf.getvalue("WH", "VALUE1")));
         int r2 = pd.compareTo(pd2);
-        if (r2 >= 0) {  // 表示 >=0.01
+        if (r2 >= 0) {  // 表示 >=0.03
             _bs = true;
         }
         //------------------判断是否发邮件------------------//
 
         //------------------判断是否发邮件------------------//
-        double sum_3 = Double.parseDouble("-0.03");
-        BigDecimal pd3 = new BigDecimal(sum_3);
+        //double sum_3 = Double.parseDouble("-0.03");
+        BigDecimal pd3 = new BigDecimal(Double.parseDouble(_xmlconf.getvalue("WH", "VALUE2")));
         int r3 = pd.compareTo(pd3);
-        if (r3 < 0) {  // 表示 <-0.01
+        if (r3 < 0) {  // 表示 <-0.03
             _bs = true;
         }
         //------------------判断是否发邮件------------------//
@@ -215,7 +243,7 @@ public class fun {
 
             try {
                 _qqsmtp.send(_mailmessage);
-                _issendok=true;
+                _issendok = true;
             } catch (Exception ex) {
                 //公司邮箱补发
                 try {
@@ -231,12 +259,12 @@ public class fun {
                     _mailmessage2.password = "txyz5011";
                     _mailmessage2.filename = "";
                     _tidesmtp.send(_mailmessage2);
-                    _issendok=true;
+                    _issendok = true;
                 } catch (Exception ex2) {
-                    System.out.println("邮件发送失败：\r\n" + ex.getMessage() + "\r\n" + ex2.getMessage());
+                    System.out.println("sendmail  false：\r\n" + ex.getMessage() + "\r\n" + ex2.getMessage());
                 }
             }
-        }        
+        }
         return _issendok;
     }
 
@@ -276,7 +304,7 @@ public class fun {
             }
 
             if (str.length() > 0) {
-                System.out.println("--------------重要事件------------\r\n" + str + "\r\n--------------重要事件------------");
+                //  System.out.println("----------------重要事件--------------\r\n" + str    + "\r\n--------------------------------------\r\n");
             }
         }
 

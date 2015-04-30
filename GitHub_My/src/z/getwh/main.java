@@ -39,10 +39,20 @@ import org.apache.http.util.EntityUtils;
  */
 public class main extends Thread {
 
+    //-------------------------------日志-------------------------------------// 
+    private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(main.class.getName()); //获得logger
+
+    static {
+        org.apache.log4j.PropertyConfigurator.configureAndWatch("conf/log4j_wh.config");
+    }
+
+    //-------------------------------日志-------------------------------------//
     private static util.GetTools.tools _tools = new util.GetTools.tools();
+    private static util.GetTools.getPro _getPro = new util.GetTools.getPro();
     private static util.GetFile.txt _txt = new util.GetFile.txt();
     private static List _list = new ArrayList();
-
+    private static util.GetFile.xmlconf _xmlconf = new util.GetFile.xmlconf();
+    //_xmlconf.getvalue(db_name, "DRIVER");
     private static strclass.data _USDX = new strclass.data();
 
     public static List _bigmessage = new ArrayList();
@@ -53,12 +63,35 @@ public class main extends Thread {
             fun.ini2(_bigmessage, _tools);
             //处理数据
 
+            log.info("begin runing...");
+
             while (true) {
-                if (fun.isOnline()) {
+                String timenows = "";
+                try {
+                    timenows = _tools.getnettime(2);
+                } catch (Exception ex) {
+                    log.info(ex.getMessage().toString());
+                }
+                if (timenows.length() > 0) {
+                    try {
+                        String cmdString = "sudo date -s \"" + timenows + "\"";
+                        _getPro.Pro_Start(cmdString);
+                        // System.out.println("command runing...");
+                    } catch (Exception ex) {
+                        log.info(ex.getMessage().toString());
+                    }
+
                     jx_url();
-                    Thread.sleep(1000 * 60);
+                    int times = 2;
+                    try {
+                        String gettime = _xmlconf.getvalue("WH", "TIMES");
+                        times = _tools.string_parse_int(gettime);
+                    } catch (Exception ex) {
+                        log.info(ex.getMessage().toString());
+                    }
+                    Thread.sleep(1000 * times);
                 } else {
-                    System.out.println("网络不通 等待15s...");
+                    log.info("no net  :wating  15s...");
                     Thread.sleep(1000 * 15);
                 }
             }
@@ -76,7 +109,7 @@ public class main extends Thread {
 
         if (_list.size() > 0) {
 
-            String systime = _tools.systime_prase_string("时") + ":" + _tools.systime_prase_string("分") + ":" + _tools.systime_prase_string("秒");
+            String systime = _tools.getnettime(1);
             strclass.data _EURUSD = new strclass.data();
             strclass.data _USDJPY = new strclass.data();
             strclass.data _GBPUSD = new strclass.data();
@@ -104,11 +137,13 @@ public class main extends Thread {
                         //pageContents = fun.getURLContent(_url, "utf-8");
                         String sp = pageContents;
 
+                        //EURUSD=x",1.1177,"4/30/2015","4:53pm"
                         _ll = null;
                         _ll = sp.split("\\n");//按换行截取
 
                         double sum = 50.14348112;
 
+                        boolean _jixi = true;
                         if (_ll.length > 0) {
                             for (int i1 = 0; i1 < _ll.length; i1++) {
                                 String out = "";
@@ -162,8 +197,13 @@ public class main extends Thread {
                                         sum = Double.parseDouble(df.format(sum));
                                     }
                                 } else {
-                                    System.out.println("未识别:" + sp2);
+                                    log.info("no jiexi:[" + sp + "]");
+                                    _jixi = false;
                                 }
+                            }
+
+                            if (!_jixi) {
+                                continue;
                             }
 
                             boolean _issendok = false;
@@ -178,10 +218,10 @@ public class main extends Thread {
                                 int r = pd.compareTo(BigDecimal.ZERO); //和0，Zero比较
                                 if (r >= 0) {  //0  等于0   1大于0
                                     _USDX.UPDOWN = "+" + df.format(sum_updown);
-                                    _issendok = fun.sendmail(pd, _USDX.UPDOWN);
+                                    _issendok = fun.sendmail(pd, _USDX.UPDOWN, _xmlconf);
                                 } else {  //   -1小于0
                                     _USDX.UPDOWN = df.format(sum_updown);
-                                    _issendok = fun.sendmail(pd, _USDX.UPDOWN);
+                                    _issendok = fun.sendmail(pd, _USDX.UPDOWN, _xmlconf);
                                 }
                                 _USDX.VALUE = df.format(sum);
                             } else {
@@ -200,7 +240,7 @@ public class main extends Thread {
                                 br.append(" ").append("SendMail");
                             }
 
-                            System.out.println(br.toString());
+                            log.info(br.toString());
                         }
 
                     } catch (Exception e) {

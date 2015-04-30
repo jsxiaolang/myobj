@@ -232,7 +232,7 @@ public class qqsmtp {
             }
             //transport.send(mimeMsg); 
 
-            System.out.println("发送邮件成功！");
+            //System.out.println("发送邮件成功！");
             transport.close();
             return true;
         } catch (Exception e) {

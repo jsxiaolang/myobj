@@ -60,14 +60,14 @@ public class xmlconf {
                                             mes.append("------------").append(mess3).append("#").append(mess3_text).append("\r\n");
 
                                             if (mess3.equals(Element)) {
-                                                str_values = mess3_text;                                           
-                                                String mess=keyname + "#" + Element + "#" + str_values+"\r\n";
-                                                System.out.println(mess);
+                                                str_values = mess3_text;
+                                                String mess = keyname + "#" + Element + "#" + str_values + "\r\n";
+                                                //System.out.println(mess);
                                                 return str_values;
                                             }
                                         }
                                         mes.append("-----------------------").append("\r\n");
-                                        System.out.println(mes.toString());
+                                        //System.out.println(mes.toString());
                                     }
                                 }
                             }
@@ -75,7 +75,7 @@ public class xmlconf {
                     }
                 }
             } else {
-                System.out.println("keyname  is  null");
+                //System.out.println("keyname  is  null");
             }
         } catch (Exception e) {
             System.out.println(_url + " \r\n" + e.getMessage());

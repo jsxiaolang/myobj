@@ -60,19 +60,19 @@ public class xml extends files {
                 if (mes_h_l.length() > 0) {
                     _url = _url + "/" + mes_h_l;
                     _url = _url.replace("\\", "/");
-                    System.out.println(_url);
+                    //System.out.println(_url);
                     File _folder = new File(_url);
                     if (!_folder.exists()) {// 不存在   
                         if (!_folder.isFile()) {//是否是有效文件
                             if (!_folder.isDirectory()) {//是否是有效目录，为空也为无效
                                 _folder.mkdir();//创建文件夹
-                                System.out.println("==========>文件夹[" + _url + "]已创建.");
+                                //System.out.println("==========>文件夹[" + _url + "]已创建.");
                                 bs = true;
                             }
                         }
                     } else {
                         bs = true;
-                        System.out.println("已存在");
+                        //System.out.println("已存在");
                     }
                 }
             }
@@ -204,7 +204,7 @@ public class xml extends files {
             String default_url = directory.getCanonicalPath().toString();
             //得到Document供操作
             Document doc = builder.build(default_url + file_url);
-            System.out.println(default_url + file_url);
+            //System.out.println(default_url + file_url);
             roots = doc.getRootElement();
         } catch (Exception ex) {
             ex.printStackTrace();
