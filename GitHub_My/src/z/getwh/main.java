@@ -52,6 +52,7 @@ public class main extends Thread {
     private static util.GetFile.txt _txt = new util.GetFile.txt();
     private static List _list = new ArrayList();
     private static util.GetFile.xmlconf _xmlconf = new util.GetFile.xmlconf();
+    private static util.GetThread.thread _thread = new util.GetThread.thread(2);
     //_xmlconf.getvalue(db_name, "DRIVER");
     private static strclass.data _USDX = new strclass.data();
 
@@ -59,46 +60,103 @@ public class main extends Thread {
 
     public void run() {
         try {
-            fun.ini(_list);
-            fun.ini2(_bigmessage, _tools);
-            //处理数据
 
-            log.info("begin runing...");
-
-            while (true) {
-                String timenows = "";
-                try {
-                    timenows = _tools.getnettime(2);
-                } catch (Exception ex) {
-                    log.info(ex.getMessage().toString());
-                }
-                if (timenows.length() > 0) {
-                    try {
-                        String cmdString = "sudo date -s \"" + timenows + "\"";
-                        _getPro.Pro_Start(cmdString);
-                        // System.out.println("command runing...");
-                    } catch (Exception ex) {
-                        log.info(ex.getMessage().toString());
-                    }
-
-                    jx_url();
-                    int times = 2;
-                    try {
-                        String gettime = _xmlconf.getvalue("WH", "TIMES");
-                        times = _tools.string_parse_int(gettime);
-                    } catch (Exception ex) {
-                        log.info(ex.getMessage().toString());
-                    }
-                    Thread.sleep(1000 * times);
-                } else {
-                    log.info("no net  :wating  15s...");
-                    Thread.sleep(1000 * 15);
-                }
-            }
+            // --------------------------添加任务------------------------//
+            _thread.execute(task_min());//任务处理
+            _thread.execute(task_hour());// 程序监控
+            // --------------------------添加任务------------------------//
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            // ------------------等待线程运行---------------//
+            _thread.waitFinish(); // 等待所有任务执行完毕
+            _thread.closePool(); // 关闭线程池
+            // ------------------等待线程运行---------------//
         }
+    }
+
+    private static Runnable task_min() {
+        return new Runnable() {
+            public void run() {
+
+                fun.ini(_list);
+                fun.ini2(_bigmessage, _tools);
+                //处理数据
+
+                log.info("task_min is runing...");
+
+                while (true) {
+                    String timenows = "";
+                    try {
+                        timenows = _tools.getnettime(2);
+                    } catch (Exception ex) {
+                        log.info(ex.getMessage().toString());
+                    }
+                    if (timenows.length() > 0) {
+                        try {
+                            String cmdString = "sudo date -s \"" + timenows + "\"";
+                            //_getPro.Pro_Start(cmdString);
+                            // System.out.println("command runing...");
+                        } catch (Exception ex) {
+                            log.info(ex.getMessage().toString());
+                        }
+
+                        jx_url();
+
+                        //------------------------------休眠----------------------------------//
+                        int times = 2;//默认2秒
+                        try {
+                            String gettime = _xmlconf.getvalue("WH", "TIMES");
+                            times = _tools.string_parse_int(gettime);//获取配置文件中设置的间隔时间
+                            Thread.sleep(1000 * times);
+                        } catch (Exception ex) {
+                            log.info(ex.getMessage().toString());
+                        }
+                        //------------------------------休眠----------------------------------//
+
+                    } else {
+                        log.info("no net  :wating  15s...");
+
+                        //------------------------------休眠----------------------------------//
+                        try {
+                            Thread.sleep(1000 * 15);
+                        } catch (Exception ex) {
+                            log.info(ex.getMessage().toString());
+                        }
+                        //------------------------------休眠----------------------------------//
+                    }
+                }
+            }
+        };
+    }
+
+    private static Runnable task_hour() {
+        return new Runnable() {
+            public void run() {
+                log.info("task_hour is runing...");
+                while (true) {
+                    try {
+
+                        boolean bs = fun.sendmail2("WH程序运行正常", _xmlconf);
+                        if (bs) {
+                            log.info("WH监控邮件发送成功");
+                        } else {
+                            log.info("WH监控邮件发送失败");
+                        }
+                    } catch (Exception ex) {
+                        log.info(ex.getMessage().toString());
+                    }
+                    //------------------------------休眠----------------------------------//
+                    try {
+                        Thread.sleep(1000 * 7200);
+                    } catch (Exception ex) {
+                        log.info(ex.getMessage().toString());
+                    }
+                    //------------------------------休眠----------------------------------//
+                }
+            }
+        };
     }
 
     private static void jx_url() {

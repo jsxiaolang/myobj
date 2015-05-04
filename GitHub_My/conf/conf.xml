@@ -295,4 +295,12 @@
     </CONFIG>
     <!--  #################################### Ftp Config ##############################################  -->
 
+
+    <CONFIG KEYNAME="WHCONFIG">
+        <DATAS  KEYNAME="WH">
+            <TIMES>120</TIMES>
+            <VALUE1>0.05</VALUE1>
+            <VALUE2>-0.05</VALUE2>
+        </DATAS>
+    </CONFIG>
 </CONFIGS>
