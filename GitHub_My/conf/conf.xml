@@ -301,6 +301,7 @@
             <TIMES>120</TIMES>
             <VALUE1>0.05</VALUE1>
             <VALUE2>-0.05</VALUE2>
+            <SENDMAIL>false</SENDMAIL>
         </DATAS>
     </CONFIG>
 </CONFIGS>

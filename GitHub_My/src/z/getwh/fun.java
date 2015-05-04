@@ -227,6 +227,15 @@ public class fun {
         }
         //------------------判断是否发邮件------------------//
 
+        //------------------判断是否发邮件------------------//
+        String _sendmail_conf = _xmlconf.getvalue("WH", "SENDMAIL");
+        if (!_sendmail_conf.equals("false")) {
+            _bs = true;
+        } else {
+            _bs = false;
+        }
+        //------------------判断是否发邮件------------------//
+
         if (_bs) {
             util.GetMail.qqsmtp _qqsmtp = new util.GetMail.qqsmtp();
             util.GetMail.qqsmtp.mailmessage _mailmessage = new util.GetMail.qqsmtp.mailmessage();
@@ -270,40 +279,53 @@ public class fun {
 
     public static boolean sendmail2(String message, util.GetFile.xmlconf _xmlconf) {
         boolean _issendok = false;
-        util.GetMail.qqsmtp _qqsmtp = new util.GetMail.qqsmtp();
-        util.GetMail.qqsmtp.mailmessage _mailmessage = new util.GetMail.qqsmtp.mailmessage();
+        boolean _bs = false;
 
-        _mailmessage.smtp = "smtp.qq.com";
-        _mailmessage.from = "11941450@qq.com";
-        _mailmessage.to = "18605236780@wo.cn";
-        _mailmessage.copyto = "";
-        _mailmessage.subject = message;
-        _mailmessage.content = message;
-        _mailmessage.username = "11941450";
-        _mailmessage.password = "txyz5011";
-        _mailmessage.filename = "";
+        //------------------判断是否发邮件------------------//
+        String _sendmail_conf = _xmlconf.getvalue("WH", "SENDMAIL");
+        if (!_sendmail_conf.equals("false")) {
+            _bs = true;
+        } else {
+            
+            _bs = false;
+        }
+        //------------------判断是否发邮件------------------//
+        if (_bs) {
+            util.GetMail.qqsmtp _qqsmtp = new util.GetMail.qqsmtp();
+            util.GetMail.qqsmtp.mailmessage _mailmessage = new util.GetMail.qqsmtp.mailmessage();
 
-        try {
-            _qqsmtp.send(_mailmessage);
-            _issendok = true;
-        } catch (Exception ex) {
-            //公司邮箱补发
+            _mailmessage.smtp = "smtp.qq.com";
+            _mailmessage.from = "11941450@qq.com";
+            _mailmessage.to = "18605236780@wo.cn";
+            _mailmessage.copyto = "";
+            _mailmessage.subject = message;
+            _mailmessage.content = message;
+            _mailmessage.username = "11941450";
+            _mailmessage.password = "txyz5011";
+            _mailmessage.filename = "";
+
             try {
-                util.GetMail.tidesmtp _tidesmtp = new util.GetMail.tidesmtp();
-                util.GetMail.tidesmtp.mailmessage _mailmessage2 = new util.GetMail.tidesmtp.mailmessage();
-                _mailmessage2.smtp = "Smtpcom.263xmail.com";
-                _mailmessage2.from = "zhenyang@tidestonesoft.com";
-                _mailmessage2.to = "18605236780@wo.cn";
-                _mailmessage2.copyto = "";
-                _mailmessage2.subject = message;
-                _mailmessage2.content = message;
-                _mailmessage2.username = "zhenyang@tidestonesoft.com";
-                _mailmessage2.password = "txyz5011";
-                _mailmessage2.filename = "";
-                _tidesmtp.send(_mailmessage2);
+                _qqsmtp.send(_mailmessage);
                 _issendok = true;
-            } catch (Exception ex2) {
-                System.out.println("sendmail  false：\r\n" + ex.getMessage() + "\r\n" + ex2.getMessage());
+            } catch (Exception ex) {
+                //公司邮箱补发
+                try {
+                    util.GetMail.tidesmtp _tidesmtp = new util.GetMail.tidesmtp();
+                    util.GetMail.tidesmtp.mailmessage _mailmessage2 = new util.GetMail.tidesmtp.mailmessage();
+                    _mailmessage2.smtp = "Smtpcom.263xmail.com";
+                    _mailmessage2.from = "zhenyang@tidestonesoft.com";
+                    _mailmessage2.to = "18605236780@wo.cn";
+                    _mailmessage2.copyto = "";
+                    _mailmessage2.subject = message;
+                    _mailmessage2.content = message;
+                    _mailmessage2.username = "zhenyang@tidestonesoft.com";
+                    _mailmessage2.password = "txyz5011";
+                    _mailmessage2.filename = "";
+                    _tidesmtp.send(_mailmessage2);
+                    _issendok = true;
+                } catch (Exception ex2) {
+                    System.out.println("sendmail  false：\r\n" + ex.getMessage() + "\r\n" + ex2.getMessage());
+                }
             }
         }
         return _issendok;

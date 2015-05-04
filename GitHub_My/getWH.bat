@@ -1,6 +1,6 @@
 @echo off
 color a
-mode con lines=20 cols=38
+mode con lines=20 cols=45
 Title ·º·ºÖ®±²
 
 set aa=E:\Working\Workspace_NetBeans\GitHub_MyObj\myobj\GitHub_My\dist\GitHub_My.jar;
