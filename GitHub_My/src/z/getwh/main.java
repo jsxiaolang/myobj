@@ -21,22 +21,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-
 /**
  *
  * @author yangzhen
- * 
+ *
  */
 public class main extends Thread {
 
@@ -53,7 +41,7 @@ public class main extends Thread {
     private static util.GetFile.txt _txt = new util.GetFile.txt();
     private static List _list = new ArrayList();
     private static util.GetFile.xmlconf _xmlconf = new util.GetFile.xmlconf();
-    private static util.GetThread.thread _thread = new util.GetThread.thread(2);
+    private static util.GetThread.thread _thread = new util.GetThread.thread(3);
     //_xmlconf.getvalue(db_name, "DRIVER");
     private static strclass.data _USDX = new strclass.data();
 
@@ -63,7 +51,7 @@ public class main extends Thread {
         try {
             // --------------------------添加任务------------------------//
             _thread.execute(task_min());//任务处理
-            _thread.execute(task_hour());// 程序监控
+            _thread.execute(task_time());// 程序监控
             // --------------------------添加任务------------------------//
 
         } catch (Exception e) {
@@ -123,38 +111,65 @@ public class main extends Thread {
         };
     }
 
-    private static Runnable task_hour() {
+    private static Runnable task_time() {
         return new Runnable() {
             public void run() {
                 log.info("task_hour is runing...");
+
+                boolean bs_t1 = false;
+                boolean bs_t2 = false;
                 while (true) {
 
                     try {//取网络时间更新系统时间
-                        String timenows = "";
-                        timenows = _tools.getnettime(2);
-                        if (timenows.length() > 0) {
-                            String cmdString = "sudo date -s \"" + timenows + "\"";
-                            _getPro.Pro_Start(cmdString);
-                            log.info("System Status:date is update...");
+                        String sys_time = "";
+                        sys_time = _tools.systime_prase_string("分");
+                        if (sys_time.equals("46")) {
+                            bs_t1 = true;
                         }
 
+                        if (bs_t1) {
+                            if (sys_time.equals("47")) {
+                                bs_t2 = true;
+                            }
+                        }
+
+                        if (bs_t2) {
+
+                            //更新系统时间
+                            try {
+                                String timenows = "";
+                                timenows = _tools.getnettime(2);
+                                if (timenows.length() > 0) {
+                                    String cmdString = "sudo date -s \"" + timenows + "\"";
+                                    _getPro.Pro_Start(cmdString);
+                                    log.info("System Status:date is update...");
+                                }
+                            } catch (Exception ex) {
+                                log.info(ex.getMessage().toString());
+                            }
+
+                            //更新系统状态
+                            try {
+                                boolean bs = fun.sendmail2("System Status: is OK", _xmlconf);
+                                if (!bs) {
+                                    log.info("System Status:send mail false ");
+                                } else {
+                                    log.info("System Status: is OK");
+                                }
+                            } catch (Exception ex) {
+                                log.info(ex.getMessage().toString());
+                            }
+
+                            bs_t1 = false;
+                            bs_t2 = false;
+                        }
                     } catch (Exception ex) {
                         log.info(ex.getMessage().toString());
                     }
 
-                    try {
-                        boolean bs = fun.sendmail2("System Status: is OK", _xmlconf);
-                        if (!bs) {
-                            log.info("System Status:send mail false ");
-                        } else {
-                            log.info("System Status: is OK");
-                        }
-                    } catch (Exception ex) {
-                        log.info(ex.getMessage().toString());
-                    }
                     //------------------------------休眠----------------------------------//
                     try {
-                        Thread.sleep(1000 * 7200);
+                        Thread.sleep(1000 * 15);
                     } catch (Exception ex) {
                         log.info(ex.getMessage().toString());
                     }
