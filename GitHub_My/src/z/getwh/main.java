@@ -36,6 +36,7 @@ import org.apache.http.util.EntityUtils;
 /**
  *
  * @author yangzhen
+ * 
  */
 public class main extends Thread {
 
@@ -60,7 +61,6 @@ public class main extends Thread {
 
     public void run() {
         try {
-
             // --------------------------添加任务------------------------//
             _thread.execute(task_min());//任务处理
             _thread.execute(task_hour());// 程序监控
@@ -87,23 +87,15 @@ public class main extends Thread {
                 log.info("task_min is runing...");
 
                 while (true) {
+                    //取网络时间，同时判断是否有网
                     String timenows = "";
                     try {
                         timenows = _tools.getnettime(2);
                     } catch (Exception ex) {
                         log.info(ex.getMessage().toString());
                     }
-                    if (timenows.length() > 0) {
-                        try {
-                            String cmdString = "sudo date -s \"" + timenows + "\"";
-                            //_getPro.Pro_Start(cmdString);
-                            // System.out.println("command runing...");
-                        } catch (Exception ex) {
-                            log.info(ex.getMessage().toString());
-                        }
-
+                    if (timenows.length() > 0) {//有网络
                         jx_url();
-
                         //------------------------------休眠----------------------------------//
                         int times = 2;//默认2秒
                         try {
@@ -116,7 +108,7 @@ public class main extends Thread {
                         //------------------------------休眠----------------------------------//
 
                     } else {
-                        log.info("no net  :wating  15s...");
+                        log.info("System Status: has not net ,please wating  15s...");
 
                         //------------------------------休眠----------------------------------//
                         try {
@@ -136,13 +128,26 @@ public class main extends Thread {
             public void run() {
                 log.info("task_hour is runing...");
                 while (true) {
-                    try {
 
-                        boolean bs = fun.sendmail2("WH程序运行正常", _xmlconf);
-                        if (bs) {
-                            log.info("WH监控邮件发送成功");
+                    try {//取网络时间更新系统时间
+                        String timenows = "";
+                        timenows = _tools.getnettime(2);
+                        if (timenows.length() > 0) {
+                            String cmdString = "sudo date -s \"" + timenows + "\"";
+                            _getPro.Pro_Start(cmdString);
+                            log.info("System Status:date is update...");
+                        }
+
+                    } catch (Exception ex) {
+                        log.info(ex.getMessage().toString());
+                    }
+
+                    try {
+                        boolean bs = fun.sendmail2("System Status: is OK", _xmlconf);
+                        if (!bs) {
+                            log.info("System Status:send mail false ");
                         } else {
-                            log.info("WH监控邮件发送失败");
+                            log.info("System Status: is OK");
                         }
                     } catch (Exception ex) {
                         log.info(ex.getMessage().toString());
