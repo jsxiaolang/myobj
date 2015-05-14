@@ -1,0 +1,6 @@
+INFO  2015-05-14 09:36:29 0    main (main.java:117)
+ - task_hour is runing...
+INFO  2015-05-14 09:36:29 47   main (main.java:75)
+ - task_min is runing...
+INFO  2015-05-14 09:36:31 2141 main (main.java:335)
+ - 2015-05-14 09:36:30 UX:93.6355 0.0000

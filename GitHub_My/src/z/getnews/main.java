@@ -45,7 +45,6 @@ public class main extends Thread {
 
     public void run() {
         try {
-
             ini();
             //加载关键字过滤
             mainkey();

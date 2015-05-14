@@ -118,22 +118,35 @@ public class main extends Thread {
 
                 boolean bs_t1 = false;
                 boolean bs_t2 = false;
+                boolean bs_t3 = false;
                 while (true) {
 
                     try {//取网络时间更新系统时间
-                        String sys_time = "";
-                        sys_time = _tools.systime_prase_string("分");
-                        if (sys_time.equals("46")) {
+                        String sys_time_min = "";
+                        sys_time_min = _tools.systime_prase_string("分");
+                        if (sys_time_min.equals("46")) {
                             bs_t1 = true;
                         }
 
                         if (bs_t1) {
-                            if (sys_time.equals("47")) {
+                            if (sys_time_min.equals("47")) {
                                 bs_t2 = true;
                             }
                         }
 
                         if (bs_t2) {
+                            String sys_time_hour = "";
+                            sys_time_hour = _tools.systime_prase_string("时");
+
+                            if (sys_time_hour.equals("7")
+                                    || sys_time_hour.equals("12")
+                                    || sys_time_hour.equals("17")
+                                    || sys_time_hour.equals("22")) {
+                                bs_t3 = true;
+                            }
+                        }
+
+                        if (bs_t3) {
 
                             //更新系统时间
                             try {
@@ -162,6 +175,7 @@ public class main extends Thread {
 
                             bs_t1 = false;
                             bs_t2 = false;
+                            bs_t3 = false;
                         }
                     } catch (Exception ex) {
                         log.info(ex.getMessage().toString());

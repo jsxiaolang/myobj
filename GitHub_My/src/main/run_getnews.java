@@ -8,6 +8,7 @@ package main;
 /**
  *
  * @author Administrator
+ *  
  */
 public class run_getnews {
 

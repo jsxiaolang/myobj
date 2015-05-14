@@ -9,7 +9,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 for /f "delims=" %%a in ('dir /b ".\lib\*.jar"') do (
 set "aa=!aa!%%a;"
 )
-::echo !aa!
+echo !aa!
 
  
 java -cp !aa! main.run_getwh
