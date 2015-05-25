@@ -15,7 +15,7 @@ kill -9 $date
 echo kill -9 $date    $pross    OK
 fi
 
-cd /root/mywh
+cd /root/GitHub_My
 #JAVA_HOME=/home/ljg/rejdk/jdk1.6.0_23
 #JAVA_VM=-hotspot
 

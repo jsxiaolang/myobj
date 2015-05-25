@@ -1,0 +1,4 @@
+INFO  2015-05-24 00:04:22 0    main (main.java:44)
+ - System Status:date is update.[00:04:20 2015-05-24 ]
+INFO  2015-05-24 00:06:33 0    main (main.java:44)
+ - System Status:date is update.[00:06:09 2015-05-24 ]
